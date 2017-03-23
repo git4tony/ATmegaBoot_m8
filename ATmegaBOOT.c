@@ -136,11 +136,13 @@ int main(void)
   asm volatile("nop\n\t");
 
   /* check if flash is programmed already, if not start bootloader anyway */
-  //if(pgm_read_byte_near(0x0000) != 0xFF) {
+  if(pgm_read_byte_near(0x0000) != 0xFF) {
 
     /* check if bootloader pin is set low */
     //if(bit_is_set(BL_PIN,BL)) app_start();
-  //}
+    if ( !bit_is_set(MCUCSR,EXTRF) ) app_start();
+  }
+  MCUCSR |= (1<<EXTRF);
 
   /* initialize UART(s) depending on CPU defined */
   /* m8 */
@@ -154,7 +156,6 @@ int main(void)
   //UCSRA = 0x00;
   //UCSRC = 0x86;
   //UCSRB = _BV(TXEN)|_BV(RXEN);
-
 
   /* this was giving uisp problems, so I removed it; without it, the boot
      works on with uisp and avrdude on the mac (at least). */
